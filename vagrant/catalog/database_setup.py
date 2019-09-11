@@ -1,41 +1,45 @@
 #!/usr/bin/env python 3
-#module to set up database and config database
+# module to set up database and config database
+import os
 import sys
-
 from sqlalchemy import Column, ForeignKey, Integer, String # these are classes
-from sqlalchemy.ext.delcarative import delcarative_base #use in configuration class code
-from sqlalchemy.orm import relationship #use to create foreign key
-from sqlalchemy import create_engine #use config code at tne end of file
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship  # use to create foreign key
+from sqlalchemy import create_engine  # use config code at tne end of file
 
-Base = delcarative_base() # let sqlalchemy know that our classes are special sqlalchemy classes that corresponde to table in our code
+# let sqlalchemy know that our classes are special sqlalchemy classes that corresponde to table in our code
+Base = declarative_base()
 
-class User(Base): #create classes
+
+class User(Base):  # create classes
     """class to create the table user"""
 
-    __tablename__ = "user" #let sqlalchemy know that variable to use refer to ourdatabase
+    __tablename__ = "user" # let sqlalchemy know that variable to use refer to ourdatabase
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)# nullable false column entry
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
-    picture = Column(String(250))
+    picture = Column(String(250))  # 250 setting length of string
 
-class Catergory(Base):
+
+class Category(Base):
     """class to create the table category"""
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False)# ref row in different table
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
     def serialize(self):
-            """returns object data in serialized format"""
+        """returns object data in serialized format"""
 
-            return {
-                'id': self.id,
-                'name': self.name,
-                'user.id': self.user_id
-            }
+        return {
+            'id': self.id,
+            'name': self.name,
+            'user.id': self.user_id
+        }
+
 
 class Item(Base):
     """to create table items"""
@@ -50,7 +54,7 @@ class Item(Base):
     user_id = Column(Integer, ForeignKey('user_id'))
     user = relationship(User)
 
-    @property:
+    @property
     def serialize(self):
         """return object data in serialized format"""
 
@@ -62,5 +66,8 @@ class Item(Base):
             'catergory_id': self.category_id
         }
 
-engine - create_engine('sqlite:///itemcatalog.db') #creaes instance of out create engine and points  to the database we will use
-Base.metadata.create_all(engine) # goes into the database and adds classes
+
+# creaes instance of out create engine points  to the database we will use
+engine = create_engine('sqlite:///itemcatalog.db')
+
+Base.metadata.create_all(engine)  # goes into the database and adds classes
