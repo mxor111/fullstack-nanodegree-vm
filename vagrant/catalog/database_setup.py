@@ -1,15 +1,12 @@
-#!/usr/bin/env python 3
-# module to set up database and config database
+
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String # these are classes
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship  # use to create foreign key
-from sqlalchemy import create_engine  # use config code at tne end of file
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
 
-# let sqlalchemy know that our classes are special sqlalchemy classes that corresponde to table in our code
 Base = declarative_base()
-
 
 class User(Base):  # create classes
     """class to create the table user"""
@@ -25,6 +22,8 @@ class User(Base):  # create classes
 class Category(Base):
     """class to create the table category"""
 
+    __tablename__ = "category"
+
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)# ref row in different table
     user_id = Column(Integer, ForeignKey('user.id'))
@@ -37,7 +36,7 @@ class Category(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'user.id': self.user_id
+            'user_id': self.user_id
         }
 
 
@@ -49,9 +48,10 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(String(250))
-    catergory_id = Column(Integer, ForeignKey('catergory.id'))
-    category = relationship(Catergory)
-    user_id = Column(Integer, ForeignKey('user_id'))
+    category_id = Column(Integer, ForeignKey('catergory.id'))
+    category = relationship(Category)
+    price = Column(String(8))
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
